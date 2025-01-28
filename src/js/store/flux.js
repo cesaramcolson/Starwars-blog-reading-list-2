@@ -2,7 +2,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
 			people: JSON.parse(localStorage.getItem("people")) || [],
-			peopleInfo: JSON.parse(localStorage.getItem("peopleInfo")) || {}
+			peopleInfo: JSON.parse(localStorage.getItem("peopleInfo")) || {},
+			favorites: JSON.parse(localStorage.getItem("favorites")) || []
 		},
 		actions: {
 			getPeople: async () => {
@@ -46,7 +47,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 						console.error("Error fetching data: ", error)
 					}
 				}
-			}
+			},
+			
 		}
 	};
 };
