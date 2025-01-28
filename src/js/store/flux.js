@@ -1,42 +1,51 @@
 const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
-			demo: [
-				{
-					title: "FIRST",
-					background: "white",
-					initial: "white"
-				},
-				{
-					title: "SECOND",
-					background: "white",
-					initial: "white"
-				}
-			]
+			people: JSON.parse(localStorage.getItem("people")) || [],
+			peopleInfo: JSON.parse(localStorage.getItem("peopleInfo")) || {}
 		},
 		actions: {
-			// Use getActions to call a function within a fuction
-			exampleFunction: () => {
-				getActions().changeColor(0, "green");
-			},
-			loadSomeData: () => {
-				/**
-					fetch().then().then(data => setStore({ "foo": data.bar }))
-				*/
-			},
-			changeColor: (index, color) => {
-				//get the store
+			getPeople: async () => {
 				const store = getStore();
-
-				//we have to loop the entire demo array to look for the respective index
-				//and change its color
-				const demo = store.demo.map((elm, i) => {
-					if (i === index) elm.background = color;
-					return elm;
-				});
-
-				//reset the global store
-				setStore({ demo: demo });
+				if (store.people.length === 0){
+					try {
+						const resp = await fetch("https://www.swapi.tech/api/people?page=1&limit=83", {
+							method: "GET", 
+							headers: {
+								"Content-type": "application/json"
+							}
+						});
+						if (!resp.ok) {
+							throw new Error(`Error Status: ${resp.status}`);
+						}
+						let data = await resp.json();
+						console.log(data);
+						setStore({ people: data.results });
+						localStorage.setItem("people", JSON.stringify(data.results));
+					} catch(error) {
+						console.error("Error fetching Data: ", error)
+					}
+				}
+			},
+			getPeopleInfo: async (id) => {
+				const store = getStore();
+				if (!store.peopleInfo[id]) {
+					try {
+						const resp = await fetch(`https://www.swapi.tech/api/people/${id}`, {
+							method: "GET",
+							headers: {
+								"Content-type": "application/json"
+							}
+						});
+						if (!resp.ok) {
+							throw new Error(`Error Status: ${resp.status}`);
+						}
+						let data = await resp.json();
+						setStore({ peopleInfo: {...store.peopleInfo, [id]: data.results.properties } });
+					} catch(error) {
+						console.error("Error fetching data: ", error)
+					}
+				}
 			}
 		}
 	};
