@@ -48,6 +48,21 @@ const getState = ({ getStore, getActions, setStore }) => {
 					}
 				}
 			},
+			addFavorite: (type, id, name) => {
+				const store = getStore();
+				const url = `deatils/${type}/${id}`;
+				if (!store.favorites.find(fav => fav.name === name)) {
+					const newFavorites = [...store.favorites, { type, id, name, url }];
+					setStore({ favorites: newFavorites });
+					localStorage.setItem("favorites", JSON.stringify(newFavorites));
+				}
+			},
+			removeFavorite: (name) => {
+				const store = getStore();
+				const newFavorites = store.favorites.filter(fav => fav.name !== name);
+				setStore({ favorites: newFavorites });
+				localStorage.setItem("favorites", JSON.stringify(newFavorites));
+			}
 			
 		}
 	};
