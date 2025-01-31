@@ -42,7 +42,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 							throw new Error(`Error Status: ${resp.status}`);
 						}
 						let data = await resp.json();
-						setStore({ peopleInfo: {...store.peopleInfo, [id]: data.results.properties } });
+						setStore({ peopleInfo: {...store.peopleInfo, [id]: data.result.properties } });
 					} catch(error) {
 						console.error("Error fetching data: ", error)
 					}
