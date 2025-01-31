@@ -1,12 +1,13 @@
 import React, { useContext, useState, useEffect } from "react";
 import { Context } from "../store/appContext";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import ImageWithFallback from "./ImageWithFallback";
 
 export const CardItem = ({ item, type }) => {
     const { actions, store } = useContext(Context);
     const [ details, setDetails ] = useState(null);
     const [ isFavorite, setIsFavorite ] = useState(false);
+    const navigate = useNavigate();
 
     useEffect(() => {
         if(!item?.uid) return;
@@ -46,6 +47,10 @@ export const CardItem = ({ item, type }) => {
         setIsFavorite(!isFavorite);
     };
 
+    const handleImageClick = () => {
+        navigate(`/details/${type}/${item.uid}`);
+    };
+
     const imageUrl = type === "character" 
     ? `https://starwars-visualguide.com/assets/img/characters/${item.uid}.jpg`
     : type === "planet" 
@@ -54,13 +59,15 @@ export const CardItem = ({ item, type }) => {
 
     return (
         <div className="card col-12 col-md m-3" style={{ minWidth: "300px" }}>
-            <ImageWithFallback 
-                src={imageUrl} 
-                fallbackSrc="https://placehold.co/300x450"
-                alt="Card image" 
-                width={300}
-                height={450}
-            />
+            <div style={{ cursor: "pointer" }} onClick={handleImageClick}>
+                <ImageWithFallback 
+                    src={imageUrl} 
+                    fallbackSrc="https://placehold.co/300x450"
+                    alt="Card image" 
+                    width={300}
+                    height={450}
+                />
+            </div>
             <div className="card-body">
                 <h5 className="card-title">{item?.name || "Unknown"}</h5>
                 {details ? (
